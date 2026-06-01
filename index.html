@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rúbrica de Evaluación — Proyecto de Grado</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f6f2; --surface: #ffffff; --surface-2: #f0efe9;
+    --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.2);
+    --text: #1a1917; --text-2: #5a5855; --text-3: #9a9895;
+    --green-bg: #e4f2e8; --green-border: #2d7a47; --green-text: #1a4d2c;
+    --blue-bg: #e4eef8; --blue-border: #2060a8; --blue-text: #123660;
+    --amber-bg: #fdf0d8; --amber-border: #c07010; --amber-text: #6b3d06;
+    --red-bg: #fbe8e8; --red-border: #b83030; --red-text: #6b1a1a;
+    --gray-bg: #eeede8; --gray-border: #888580; --gray-text: #3a3835;
+    --ajuste-bg: #e4eef8; --ajuste-text: #123660;
+    --proto-bg: #e4f2e8; --proto-text: #1a4d2c;
+    --valid-bg: #fdf0d8; --valid-text: #6b3d06;
+    --doc-bg: #ede8f8; --doc-text: #3a206b;
+    --trans-bg: #eeede8; --trans-text: #3a3835;
+    --radius: 10px; --radius-sm: 6px; --radius-lg: 14px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .page-header { background: var(--text); color: #f7f6f2; padding: 2rem 2.5rem 1.75rem; position: sticky; top: 0; z-index: 100; }
+  .page-header-inner { max-width: 780px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .page-header h1 { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.3; }
+  .page-header p { font-size: 12px; opacity: 0.55; margin-top: 3px; font-weight: 300; }
+  .header-badge { font-family: 'DM Mono', monospace; font-size: 10px; background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 20px; white-space: nowrap; margin-top: 2px; letter-spacing: 0.04em; }
+  .main { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 2rem; }
+  .info-grid input, .info-grid select { width: 100%; padding: 10px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); transition: border-color 0.15s; appearance: none; -webkit-appearance: none; }
+  .info-grid input:focus, .info-grid select:focus { outline: none; border-color: var(--border-strong); }
+  .info-grid input::placeholder { color: var(--text-3); }
+  .select-wrap { position: relative; grid-column: 1 / -1; }
+  .select-wrap::after { content: '↓'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-3); pointer-events: none; }
+  .select-wrap select { width: 100%; cursor: pointer; }
+  .criterio-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; transition: box-shadow 0.15s; }
+  .criterio-card:hover { box-shadow: var(--shadow); }
+  .criterio-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 16px 18px; cursor: pointer; user-select: none; }
+  .criterio-header:hover { background: var(--surface-2); }
+  .criterio-meta { flex: 1; min-width: 0; }
+  .criterio-nombre { font-size: 14px; font-weight: 500; line-height: 1.4; color: var(--text); }
+  .criterio-momento { display: inline-block; font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 20px; margin-top: 6px; font-family: 'DM Mono', monospace; letter-spacing: 0.03em; }
+  .m-ajuste { background: var(--ajuste-bg); color: var(--ajuste-text); }
+  .m-prototipado { background: var(--proto-bg); color: var(--proto-text); }
+  .m-validacion { background: var(--valid-bg); color: var(--valid-text); }
+  .m-documentacion { background: var(--doc-bg); color: var(--doc-text); }
+  .m-transversal { background: var(--trans-bg); color: var(--trans-text); }
+  .criterio-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .nota-badge { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; min-width: 44px; text-align: right; color: var(--text); }
+  .nota-badge.pending { color: var(--text-3); font-size: 15px; padding-top: 3px; }
+  .chevron { font-size: 14px; color: var(--text-3); transition: transform 0.2s; display: inline-block; }
+  .chevron.open { transform: rotate(180deg); }
+  .criterio-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--border); }
+  .criterio-body.open { display: block; }
+  .guia-box { margin: 14px 0; padding: 12px 14px; font-size: 13px; line-height: 1.65; color: var(--text-2); background: var(--surface-2); border-radius: var(--radius-sm); border-left: 3px solid var(--border-strong); }
+  .niveles-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-bottom: 10px; }
+  .nivel-btn { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 6px; cursor: pointer; text-align: center; background: var(--surface); transition: all 0.12s; }
+  .nivel-btn:hover { background: var(--surface-2); border-color: var(--border-strong); }
+  .nivel-nombre { font-size: 10px; font-weight: 500; color: var(--text-2); margin-bottom: 3px; }
+  .nivel-rango { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text); }
+  .nivel-btn.sel-E { background: var(--green-bg); border-color: var(--green-border); }
+  .nivel-btn.sel-E .nivel-nombre, .nivel-btn.sel-E .nivel-rango { color: var(--green-text); }
+  .nivel-btn.sel-MB { background: var(--blue-bg); border-color: var(--blue-border); }
+  .nivel-btn.sel-MB .nivel-nombre, .nivel-btn.sel-MB .nivel-rango { color: var(--blue-text); }
+  .nivel-btn.sel-A { background: var(--amber-bg); border-color: var(--amber-border); }
+  .nivel-btn.sel-A .nivel-nombre, .nivel-btn.sel-A .nivel-rango { color: var(--amber-text); }
+  .nivel-btn.sel-D { background: var(--red-bg); border-color: var(--red-border); }
+  .nivel-btn.sel-D .nivel-nombre, .nivel-btn.sel-D .nivel-rango { color: var(--red-text); }
+  .nivel-btn.sel-I { background: var(--gray-bg); border-color: var(--gray-border); }
+  .nivel-btn.sel-I .nivel-nombre, .nivel-btn.sel-I .nivel-rango { color: var(--gray-text); }
+  .nivel-detalle { display: none; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; }
+  .nivel-detalle.open { display: block; }
+  .nivel-desc-text { font-size: 12px; color: var(--text-2); line-height: 1.6; margin-bottom: 12px; }
+  .nota-input-row { display: flex; align-items: center; gap: 10px; }
+  .nota-input-label { font-size: 12px; color: var(--text-2); white-space: nowrap; }
+  .nota-rango-label { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text); }
+  .nota-input { width: 76px; padding: 7px 10px; font-size: 14px; font-weight: 500; font-family: 'DM Mono', monospace; text-align: center; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); transition: border-color 0.15s; }
+  .nota-input:focus { outline: none; border-color: var(--border-strong); }
+  .nota-error { font-size: 11px; color: var(--red-text); display: none; }
+  .nota-error.show { display: inline; }
+  .obs-label { font-size: 11px; color: var(--text-3); margin-top: 12px; margin-bottom: 4px; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+  .obs-input { width: 100%; font-size: 12px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; background: var(--surface); color: var(--text); resize: vertical; min-height: 54px; line-height: 1.5; transition: border-color 0.15s; }
+  .obs-input:focus { outline: none; border-color: var(--border-strong); }
+  .obs-input::placeholder { color: var(--text-3); }
+  .resumen { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow); }
+  .resumen-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 1.25rem; }
+  .res-card { background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; text-align: center; }
+  .res-label { font-size: 10px; color: var(--text-3); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+  .res-value { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: var(--text); }
+  .res-sub { font-size: 10px; color: var(--text-3); margin-top: 3px; }
+  .nota-final-box { text-align: center; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 1rem; }
+  .nf-label { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .nf-valor { font-family: 'DM Mono', monospace; font-size: 42px; font-weight: 500; color: var(--text); line-height: 1; }
+  .nf-estado { font-size: 13px; margin-top: 6px; color: var(--text-3); }
+  .progress-wrap { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+  .progress-fill { height: 100%; background: var(--text); border-radius: 2px; transition: width 0.3s; }
+  .progress-label { font-size: 11px; color: var(--text-3); text-align: right; font-family: 'DM Mono', monospace; }
+  .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; flex-wrap: wrap; }
+  .btn { display: flex; align-items: center; gap: 6px; padding: 9px 16px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: background 0.15s; }
+  .btn:hover { background: var(--surface-2); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+  /* Toast */
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); font-size: 13px; font-family: 'DM Sans', sans-serif; padding: 10px 20px; border-radius: 20px; opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--red-border); }
+  @media (max-width: 560px) {
+    .page-header { padding: 1.25rem 1.25rem 1rem; }
+    .main { padding: 1.25rem 1rem 3rem; }
+    .info-grid { grid-template-columns: 1fr; }
+    .niveles-grid { grid-template-columns: repeat(3, 1fr); }
+    .resumen-grid { grid-template-columns: repeat(2, 1fr); }
+    .nf-valor { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<header class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <h1>Rúbrica de Evaluación — Proyecto de Grado</h1>
+      <p>Diseño Gráfico e Industrial · Universidad del Norte</p>
+    </div>
+    <span class="header-badge">JURADO EXTERNO</span>
+  </div>
+</header>
+
+<main class="main">
+  <div class="section-label" style="margin-bottom: 10px;">Información del jurado y proyecto</div>
+  <div class="info-grid">
+    <input type="text" id="nombre-jurado" placeholder="Nombre del jurado" />
+    <div class="select-wrap">
+      <select id="select-proyecto">
+        <option value="">— Seleccionar estudiante / proyecto —</option>
+        <option value="María Fernanda Julio|Creación de material didáctico como propuesta para incentivar el interés en el aprendizaje de astronomía en la educación infantil">María Fernanda Julio — Astronomía en la educación infantil</option>
+        <option value="Anyelina Molina|¿Pubertad? No entiendo. Una estrategia pedagógica para la educación integral para la sexualidad en la infancia">Anyelina Molina — ¿Pubertad? No entiendo.</option>
+        <option value="María José Lara|Diseño de un libro basado en el humor como estrategia para el manejo de la frustración, por comparación en redes sociales en jóvenes de 20 a 30 años en Barranquilla">María José Lara — Error 404: Expectativa no encontrada</option>
+        <option value="Luna Martínez|Lumi y el miedo: una estrategia que involucra la pedagogía, psicología y el diseño para fomentar el aprendizaje de la educación emocional en niños de 8 a 10 años">Luna Martínez — Lumi y el miedo</option>
+        <option value="Nicole Murillo|Sintonía: Diseño de un Gráfico de Acompañamiento Emocional para Niñas de 12 a 16 años">Nicole Murillo — Sintonía</option>
+        <option value="Daniela Barrios|Estrategia de diferenciación para la marca emergente de galletas artesanales ANTOJITOS">Daniela Barrios — ANTOJITOS: identidad de marca</option>
+        <option value="Manuela Londoño|Desde el Plato: Diseño de una herramienta editorial como estrategia de acompañamiento para la adaptación alimentaria en pacientes post-gastrectomía">Manuela Londoño — Desde el Plato</option>
+        <option value="Ángelo Cambieri|Raíces con Color: Propuesta de comunicación gráfica interactiva para fortalecer el conocimiento del origen y significado cultural de los personajes del Carnaval de Barranquilla en jóvenes de 16 a 19 años">Ángelo Cambieri — Raíces con Color</option>
+        <option value="Mariana Romero|Crew: Estrategia de diseño interactivo para contribuir el acceso y la vinculación a los grupos estudiantiles universitarios de la Universidad del Norte">Mariana Romero — Crew</option>
+        <option value="Vanessa Serrano|Promessia: Una propuesta de marketing deportivo para conectar a jóvenes deportistas, de 18 a 21 años, con cazatalentos y marcas en la ciudad de Santa Marta, Colombia">Vanessa Serrano — Promessia</option>
+        <option value="Adriana Ramírez|Diseño de una solución digital centrada en la experiencia de usuario para la organización y planificación de la oferta turística y cultural en el departamento del Atlántico">Adriana Ramírez — Turismo y cultura en el Atlántico</option>
+        <option value="Daniel Ortega|Small Hell: Webcomic interactivo para la autoaceptación">Daniel Ortega — Small Hell</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-label">Criterios de evaluación</div>
+  <div id="criterios-container"></div>
+
+  <div class="resumen">
+    <div class="section-label" style="margin-bottom: 12px;">Resumen de calificaciones</div>
+    <div class="resumen-grid" id="resumen-grid"></div>
+    <div class="nota-final-box">
+      <div class="nf-label">Nota final — promedio</div>
+      <div class="nf-valor" id="nf-valor">—</div>
+      <div class="nf-estado" id="nf-estado">Complete todos los criterios para obtener la nota final</div>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="prog-label">0 / 7 criterios evaluados</div>
+    <div class="actions">
+      <button class="btn" onclick="limpiar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Limpiar
+      </button>
+      <button class="btn" onclick="exportarCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar CSV
+      </button>
+      <button class="btn primary" id="btn-enviar" onclick="enviarASheets()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Enviar evaluación
+      </button>
+    </div>
+  </div>
+</main>
+
+<script>
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwmhv7xsB8YSoJlAJneNqqPBV9bqV3MyBOXQ0vMrvpVlm-lif9EY4nkum0O0mQT_E6U-w/exec";
+
+const CRITERIOS = [
+  { id:"claridad", nombre:"Claridad y pertinencia del problema, objetivos y cronograma", momento:"Ajuste y fundamentación", mkey:"ajuste",
+    guia:"Evalúa si el problema de diseño está claramente formulado, si los objetivos son coherentes, específicos y alcanzables, y si el cronograma refleja una planificación realista y estructurada. Considere la viabilidad técnica y la relevancia del problema abordado.",
+    niveles:{ E:"Problema y objetivos claramente definidos, relevantes y viables; cronograma riguroso y bien estructurado con hitos claros.", MB:"Buen planteamiento del problema; ajustes menores necesarios en objetivos o cronograma.", A:"Definición básica del problema; planificación poco detallada o con inconsistencias.", D:"Formulación débil del problema; cronograma limitado o poco coherente con los objetivos.", I:"No hay claridad ni viabilidad en el planteamiento. Problema confuso u objetivos ausentes." }},
+  { id:"prototipado", nombre:"Prototipado y desarrollo del sistema", momento:"Prototipado", mkey:"prototipado",
+    guia:"Valora la calidad, diversidad y articulación sistémica de los prototipos desarrollados. Observe si los modelos demuestran evolución y experimentación progresiva, y si los componentes funcionan como un sistema coherente.",
+    niveles:{ E:"Prototipos funcionales, diversos y articulados como sistema; demuestran experimentación y evolución progresiva del proceso proyectual.", MB:"Prototipos coherentes; representan la solución con integridad parcial y evidencian proceso de desarrollo.", A:"Prototipos básicos o con articulación limitada entre componentes.", D:"Prototipos poco desarrollados, incompletos o no funcionales.", I:"No se evidencia desarrollo significativo de prototipado." }},
+  { id:"validacion", nombre:"Validación — Pruebas y ajustes con usuarios", momento:"Validación", mkey:"validacion",
+    guia:"Evalúa el rigor del proceso de prueba con usuarios reales o representativos, la pertinencia de los métodos de validación empleados, y cómo los hallazgos se tradujeron en ajustes concretos sustentados en evidencia.",
+    niveles:{ E:"Validación rigurosa con usuarios; incorpora ajustes pertinentes sustentados en evidencia empírica con trazabilidad clara.", MB:"Buen proceso de validación y ajuste parcial documentado.", A:"Validación básica; aplicación parcial de resultados al diseño final.", D:"Validación limitada, sin retroalimentación significativa o sin impacto visible en el diseño.", I:"No se realiza validación o no se evidencian cambios derivados de pruebas." }},
+  { id:"documentacion", nombre:"Documentación del proceso y técnica", momento:"Documentación", mkey:"documentacion",
+    guia:"Revisa si la memoria comunica con claridad el proceso proyectual completo, incluye documentación técnica pertinente y presenta trazabilidad entre los momentos del proceso.",
+    niveles:{ E:"Memoria clara, completa, con trazabilidad del proceso y documentación técnica pertinente. Permite comprender integralmente la solución.", MB:"Memoria clara con documentación técnica casi completa; vacíos menores no afectan la comprensión.", A:"Documentación suficiente, aunque con vacíos en momentos clave del proceso.", D:"Documentación poco clara, incompleta o sin articulación proceso-resultado.", I:"No se presenta evidencia suficiente del proceso proyectual." }},
+  { id:"gestion", nombre:"Gestión del diseño", momento:"Transversal", mkey:"transversal",
+    guia:"Valora la capacidad del equipo para administrar recursos, roles y etapas del proyecto con estrategias visibles. Incluye distribución del trabajo, cumplimiento de cronograma y toma de decisiones frente a imprevistos.",
+    niveles:{ E:"Excelente administración de recursos, roles y etapas. Se evidencian estrategias claras de gestión a lo largo del proceso.", MB:"Buena planificación y manejo de recursos; ejecución adecuada con evidencia de coordinación.", A:"Gestión aceptable, pero con falencias en tiempos, roles o recursos.", D:"Mala coordinación o ejecución de actividades; evidencias de desorganización.", I:"Sin evidencia de gestión estructurada del proyecto." }},
+  { id:"sostenibilidad", nombre:"Pensamiento sostenible", momento:"Transversal", mkey:"transversal",
+    guia:"Evalúa si el proyecto considera de manera crítica y coherente los impactos ambientales, sociales y éticos de la solución propuesta.",
+    niveles:{ E:"Identificación crítica y acción coherente frente a impactos ambientales. La propuesta tiene un enfoque ético integrado al diseño.", MB:"Consideración activa de la sostenibilidad, aunque no integral a todas las decisiones proyectuales.", A:"Consideraciones básicas de sostenibilidad, con poco impacto real en el diseño.", D:"Mención superficial de aspectos ambientales, sin integración al proceso.", I:"Ignora o contradice principios de sostenibilidad." }},
+  { id:"expresion", nombre:"Expresión y representación del proyecto", momento:"Transversal", mkey:"transversal",
+    guia:"Evalúa la calidad de la comunicación visual y verbal durante la sustentación. Considere la coherencia del lenguaje gráfico, la claridad narrativa, el dominio del tema y la adecuación al contexto académico.",
+    niveles:{ E:"Comunicación visual y verbal efectiva, coherente con el contexto y el público. Narrativa convincente y dominio técnico demostrado.", MB:"Representación clara y pertinente, con buena narrativa y presentación oral sólida.", A:"Expresión comprensible pero con debilidades visuales o conceptuales en la presentación.", D:"Expresión confusa o poco profesional; dificultades en la comunicación oral o visual.", I:"Representación inadecuada o ausente; incapacidad de comunicar el proyecto." }}
+];
+
+const NIVELES = [
+  {key:"E",  nombre:"Excelente",    rango:"4.6–5.0", min:4.6, max:5.0},
+  {key:"MB", nombre:"Muy bueno",    rango:"4.0–4.5", min:4.0, max:4.5},
+  {key:"A",  nombre:"Aceptable",    rango:"3.0–3.9", min:3.0, max:3.9},
+  {key:"D",  nombre:"Deficiente",   rango:"2.0–2.9", min:2.0, max:2.9},
+  {key:"I",  nombre:"Insuficiente", rango:"0.0–1.9", min:0.0, max:1.9}
+];
+
+const MCLASS = {ajuste:"m-ajuste", prototipado:"m-prototipado", validacion:"m-validacion", documentacion:"m-documentacion", transversal:"m-transversal"};
+
+let niveles={}, notas={}, obs={}, abiertos={};
+
+function nObj(k){ return NIVELES.find(n=>n.key===k); }
+
+function showToast(msg, isError=false){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.className="toast"+(isError?" error":"");
+  void t.offsetWidth;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 3500);
+}
+
+function render(){
+  const c=document.getElementById("criterios-container");
+  c.innerHTML="";
+  CRITERIOS.forEach(cr=>{
+    const nv=niveles[cr.id], nt=notas[cr.id];
+    const notaTxt=(nv&&nt!==undefined)?parseFloat(nt).toFixed(1):"—";
+    const open=abiertos[cr.id]||false;
+    const div=document.createElement("div");
+    div.className="criterio-card"; div.id="card-"+cr.id;
+    div.innerHTML=`
+      <div class="criterio-header" onclick="toggle('${cr.id}')">
+        <div class="criterio-meta">
+          <div class="criterio-nombre">${cr.nombre}</div>
+          <span class="criterio-momento ${MCLASS[cr.mkey]}">${cr.momento}</span>
+        </div>
+        <div class="criterio-right">
+          <span class="nota-badge${notaTxt==='—'?' pending':''}" id="badge-${cr.id}">${notaTxt}</span>
+          <span class="chevron${open?' open':''}" id="chev-${cr.id}">↓</span>
+        </div>
+      </div>
+      <div class="criterio-body${open?' open':''}" id="body-${cr.id}">
+        <div class="guia-box">${cr.guia}</div>
+        <div class="niveles-grid">
+          ${NIVELES.map(n=>`
+            <button class="nivel-btn${nv===n.key?' sel-'+n.key:''}" onclick="selNivel('${cr.id}','${n.key}')">
+              <div class="nivel-nombre">${n.nombre}</div>
+              <div class="nivel-rango">${n.rango}</div>
+            </button>`).join('')}
+        </div>
+        <div class="nivel-detalle${nv?' open':''}" id="det-${cr.id}">
+          <div class="nivel-desc-text" id="desc-${cr.id}">${nv?cr.niveles[nv]:''}</div>
+          <div class="nota-input-row">
+            <span class="nota-input-label">Nota asignada</span>
+            <span class="nota-rango-label" id="rl-${cr.id}">${nv?'('+nObj(nv).rango+')':''}</span>
+            <input class="nota-input" type="number" id="ni-${cr.id}" step="0.1"
+              min="${nv?nObj(nv).min:0}" max="${nv?nObj(nv).max:5}"
+              value="${nt!==undefined?nt:''}" placeholder="—"
+              oninput="valNota('${cr.id}',this.value)" />
+            <span class="nota-error" id="err-${cr.id}">Fuera del rango</span>
+          </div>
+        </div>
+        <div class="obs-label">Observaciones</div>
+        <textarea class="obs-input" id="obs-${cr.id}" placeholder="Comentarios cualitativos para el estudiante..."
+          oninput="obs['${cr.id}']=this.value">${obs[cr.id]||''}</textarea>
+      </div>`;
+    c.appendChild(div);
+  });
+  actualizarResumen();
+}
+
+function toggle(id){
+  abiertos[id]=!abiertos[id];
+  const b=document.getElementById("body-"+id), ch=document.getElementById("chev-"+id);
+  if(b) b.className="criterio-body"+(abiertos[id]?" open":"");
+  if(ch) ch.className="chevron"+(abiertos[id]?" open":"");
+}
+
+function selNivel(cid,nk){
+  const prev=niveles[cid]; niveles[cid]=nk;
+  if(prev!==nk) delete notas[cid];
+  const cr=CRITERIOS.find(c=>c.id===cid), no=nObj(nk);
+  document.querySelectorAll(`#body-${cid} .nivel-btn`).forEach((b,i)=>{
+    b.className="nivel-btn"+(NIVELES[i].key===nk?" sel-"+nk:"");
+  });
+  const det=document.getElementById("det-"+cid); if(det) det.className="nivel-detalle open";
+  const desc=document.getElementById("desc-"+cid); if(desc) desc.textContent=cr.niveles[nk];
+  const rl=document.getElementById("rl-"+cid); if(rl) rl.textContent="("+no.rango+")";
+  const ni=document.getElementById("ni-"+cid);
+  if(ni){ ni.min=no.min; ni.max=no.max; ni.value=notas[cid]!==undefined?notas[cid]:""; ni.placeholder=no.min.toFixed(1)+"–"+no.max.toFixed(1); }
+  const err=document.getElementById("err-"+cid); if(err) err.className="nota-error";
+  const badge=document.getElementById("badge-"+cid);
+  if(badge){ badge.textContent="—"; badge.className="nota-badge pending"; }
+  actualizarResumen();
+}
+
+function valNota(cid,val){
+  const nv=niveles[cid]; if(!nv) return;
+  const no=nObj(nv), num=parseFloat(val);
+  const err=document.getElementById("err-"+cid), badge=document.getElementById("badge-"+cid);
+  if(isNaN(num)||val===""){
+    delete notas[cid];
+    if(err) err.className="nota-error";
+    if(badge){badge.textContent="—";badge.className="nota-badge pending";}
+  } else if(num<no.min||num>no.max){
+    if(err) err.className="nota-error show";
+    delete notas[cid];
+    if(badge){badge.textContent="—";badge.className="nota-badge pending";}
+  } else {
+    if(err) err.className="nota-error";
+    notas[cid]=num;
+    if(badge){badge.textContent=num.toFixed(1);badge.className="nota-badge";}
+  }
+  actualizarResumen();
+}
+
+function actualizarResumen(){
+  const ev=CRITERIOS.filter(c=>niveles[c.id]&&notas[c.id]!==undefined).length;
+  const total=CRITERIOS.length;
+  document.getElementById("prog-fill").style.width=Math.round(ev/total*100)+"%";
+  document.getElementById("prog-label").textContent=`${ev} / ${total} criterios evaluados`;
+  const bloques=[
+    {label:"Ajuste y fund.",ids:["claridad"]},
+    {label:"Prototipado",ids:["prototipado"]},
+    {label:"Validación",ids:["validacion"]},
+    {label:"Transversales",ids:["documentacion","gestion","sostenibilidad","expresion"]}
+  ];
+  document.getElementById("resumen-grid").innerHTML=bloques.map(b=>{
+    const ns=b.ids.filter(id=>notas[id]!==undefined).map(id=>notas[id]);
+    const p=ns.length>0?(ns.reduce((a,x)=>a+x,0)/ns.length).toFixed(2):"—";
+    return`<div class="res-card"><div class="res-label">${b.label}</div><div class="res-value">${p}</div><div class="res-sub">${ns.length}/${b.ids.length} eval.</div></div>`;
+  }).join('');
+  const nfv=document.getElementById("nf-valor"), nfe=document.getElementById("nf-estado");
+  if(ev===total){
+    const prom=(CRITERIOS.map(c=>notas[c.id]).reduce((a,b)=>a+b,0)/total).toFixed(2);
+    nfv.textContent=prom;
+    const n=parseFloat(prom);
+    if(n>=4.6){nfe.textContent="Excelente";nfe.style.color="var(--green-text)";}
+    else if(n>=4.0){nfe.textContent="Muy bueno";nfe.style.color="var(--blue-text)";}
+    else if(n>=3.0){nfe.textContent="Aprobado";nfe.style.color="var(--amber-text)";}
+    else{nfe.textContent="No aprobado";nfe.style.color="var(--red-text)";}
+  } else {
+    const vs=CRITERIOS.filter(c=>notas[c.id]!==undefined).map(c=>notas[c.id]);
+    nfv.textContent=vs.length>0?(vs.reduce((a,b)=>a+b,0)/vs.length).toFixed(2)+"*":"—";
+    nfe.textContent=vs.length>0?`*Parcial — ${total-ev} criterios pendientes`:"Complete todos los criterios para obtener la nota final";
+    nfe.style.color="var(--text-3)";
+  }
+}
+
+function limpiar(){
+  if(!confirm("¿Limpiar todas las calificaciones y observaciones?")) return;
+  niveles={}; notas={}; obs={}; abiertos={};
+  document.getElementById("nombre-jurado").value="";
+  document.getElementById("select-proyecto").value="";
+  render();
+}
+
+function exportarCSV(){
+  const jurado=document.getElementById("nombre-jurado").value||"Sin registrar";
+  const pval=document.getElementById("select-proyecto").value;
+  let est="Sin seleccionar", tit="Sin seleccionar";
+  if(pval){const p=pval.split("|");est=p[0]||est;tit=p[1]||tit;}
+  const ev=CRITERIOS.filter(c=>niveles[c.id]&&notas[c.id]!==undefined).length;
+  let rows=[
+    ["RÚBRICA DE EVALUACIÓN — PROYECTO DE GRADO"],[],
+    ["Jurado",jurado],["Estudiante",est],["Título del proyecto",tit],
+    ["Criterios evaluados",`${ev} / ${CRITERIOS.length}`],[],
+    ["Criterio","Momento","Nivel","Nota","Observaciones"]
+  ];
+  CRITERIOS.forEach(c=>{
+    const nv=niveles[c.id], nt=notas[c.id];
+    rows.push([c.nombre,c.momento,nv?nObj(nv).nombre:"Pendiente",nt!==undefined?parseFloat(nt).toFixed(1):"—",obs[c.id]||""]);
+  });
+  rows.push([]);
+  if(ev===CRITERIOS.length){
+    const prom=(CRITERIOS.map(c=>notas[c.id]).reduce((a,b)=>a+b,0)/CRITERIOS.length).toFixed(2);
+    rows.push(["NOTA FINAL (promedio)","","",prom,""]);
+  } else {
+    rows.push(["NOTA PARCIAL — evaluación incompleta","","","",""]);
+  }
+  const csv=rows.map(r=>r.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a");
+  a.href=url; a.download=`evaluacion_PG_${est.replace(/\s+/g,"_")}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function enviarASheets(){
+  const jurado=document.getElementById("nombre-jurado").value.trim();
+  const pval=document.getElementById("select-proyecto").value;
+  if(!jurado){ showToast("Ingresa el nombre del jurado antes de enviar.",true); return; }
+  if(!pval){ showToast("Selecciona un estudiante antes de enviar.",true); return; }
+  const ev=CRITERIOS.filter(c=>niveles[c.id]&&notas[c.id]!==undefined).length;
+  if(ev<CRITERIOS.length){ showToast(`Faltan ${CRITERIOS.length-ev} criterios por evaluar.`,true); return; }
+
+  const parts=pval.split("|");
+  const est=parts[0]||""; const tit=parts[1]||"";
+  const prom=(CRITERIOS.map(c=>notas[c.id]).reduce((a,b)=>a+b,0)/CRITERIOS.length).toFixed(2);
+
+  const payload={
+    jurado, estudiante:est, titulo:tit,
+    claridad_obs:obs["claridad"]||"",       claridad_nivel:nObj(niveles["claridad"]).nombre,       claridad_nota:notas["claridad"],
+    prototipado_obs:obs["prototipado"]||"", prototipado_nivel:nObj(niveles["prototipado"]).nombre, prototipado_nota:notas["prototipado"],
+    validacion_obs:obs["validacion"]||"",   validacion_nivel:nObj(niveles["validacion"]).nombre,   validacion_nota:notas["validacion"],
+    documentacion_obs:obs["documentacion"]||"", documentacion_nivel:nObj(niveles["documentacion"]).nombre, documentacion_nota:notas["documentacion"],
+    gestion_obs:obs["gestion"]||"",         gestion_nivel:nObj(niveles["gestion"]).nombre,         gestion_nota:notas["gestion"],
+    sostenibilidad_obs:obs["sostenibilidad"]||"", sostenibilidad_nivel:nObj(niveles["sostenibilidad"]).nombre, sostenibilidad_nota:notas["sostenibilidad"],
+    expresion_obs:obs["expresion"]||"",     expresion_nivel:nObj(niveles["expresion"]).nombre,     expresion_nota:notas["expresion"],
+    nota_final:prom
+  };
+
+  const btn=document.getElementById("btn-enviar");
+  btn.disabled=true; btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Enviando...`;
+
+  fetch(SHEETS_URL, {
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  })
+  .then(()=>{
+    showToast("✓ Evaluación enviada correctamente a Google Sheets.");
+    btn.disabled=false;
+    btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar evaluación`;
+  })
+  .catch(()=>{
+    showToast("Error de conexión. Usa 'Exportar CSV' como respaldo.",true);
+    btn.disabled=false;
+    btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enviar evaluación`;
+  });
+}
+
+render();
+</script>
+</body>
+</html>
